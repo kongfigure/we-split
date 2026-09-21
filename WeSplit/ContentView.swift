@@ -33,14 +33,14 @@ struct ContentView: View {
                 Section {
                     Picker("Tip percentage", selection: $tipPercentage) {
                         ForEach([0, 10, 15, 20, 25], id: \.self) { percentage in
-                                if percentage == 0 {
-                                    Text(percentage, format: .percent).foregroundStyle(.red)
-                                } else {
-                                    Text(percentage, format: .percent)
-                                }
+                                Text(percentage, format: .percent)
                         }
                     }
                     .pickerStyle(.segmented)
+                    
+                    if tipPercentage == 0 {
+                        Text("You've selected no tip").foregroundStyle(.red).font(.footnote)
+                    }
                 } footer: {
                     Text("Tip amount: \(tipAmount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))")
                 }
