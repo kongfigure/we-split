@@ -30,17 +30,25 @@ struct ContentView: View {
                     }
                 }
                 
-                Section("Tip percentage") {
+                Section {
                     Picker("Tip percentage", selection: $tipPercentage) {
-                        ForEach([0, 10, 15, 20, 25], id: \.self) {
-                            Text($0, format: .percent)
+                        ForEach([0, 10, 15, 20, 25], id: \.self) { percentage in
+                                if percentage == 0 {
+                                    Text(percentage, format: .percent).foregroundStyle(.red)
+                                } else {
+                                    Text(percentage, format: .percent)
+                                }
                         }
                     }
                     .pickerStyle(.segmented)
+                } footer: {
+                    Text("Tip amount: \(tipAmount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))")
                 }
                 
                 Section {
                     Text(totalPerPerson, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                } footer: {
+                    Text("Total with tip: \(grandTotal, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))")
                 }
             }
             .navigationTitle("WeSplit")
@@ -57,6 +65,15 @@ struct ContentView: View {
         
         return amountPerperson
     }
+    
+    var tipAmount: Double {
+        checkAmount / 100 * Double(tipPercentage)
+    }
+    
+    var grandTotal: Double {
+        checkAmount + tipAmount
+    }
+    
 }
 
 #Preview {
