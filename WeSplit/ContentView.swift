@@ -18,11 +18,44 @@ struct ContentView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("Amount", value: $checkAmount, format: .currency(code: "USD"))
+                    TextField("Amount", value: $checkAmount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                         .keyboardType(.decimalPad)
                 }
+                
+                Section {
+                    Picker("Number of people", selection: $numberOfPeople) {
+                        ForEach(2..<100) {
+                            Text("\($0) people")
+                        }
+                    }
+                }
+                
+                Section("Tip percentage") {
+                    Picker("Tip percentage", selection: $tipPercentage) {
+                        ForEach([0, 10, 15, 20, 25], id: \.self) {
+                            Text($0, format: .percent)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                
+                Section {
+                    Text(totalPerPerson, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                }
             }
+            .navigationTitle("WeSplit")
         }
+    }
+    
+    var totalPerPerson: Double {
+        let peopleCount = Double(numberOfPeople)
+        let tipSelection = Double(tipPercentage)
+        
+        let tipValue = checkAmount / 100 * tipSelection
+        let grandTotal = checkAmount + tipValue
+        let amountPerperson = grandTotal / peopleCount
+        
+        return amountPerperson
     }
 }
 
